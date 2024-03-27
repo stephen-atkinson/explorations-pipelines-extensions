@@ -33,7 +33,7 @@ jobs:
       - run: echo "${{steps.get-version.outputs.version}}"
           
       - name: Pack
-        run: dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' -c Release /p:Version=${{steps.get-version.outputs.version}} --no-build --output .
+        run: dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' -c Release /p:Version=${{steps.get-version.outputs.version}} --output .
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push "bin/Release/MyApp.${{ steps.get-version.outputs.version }}.nupkg" --source "github"
+        run: dotnet nuget push "${{env.PROJECT_NAME}}.${{ steps.get-version.outputs.version }}.nupkg" --source "github"
