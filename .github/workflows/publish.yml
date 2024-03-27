@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PACK_OUTPUT_FOLDER: 'pack-output'
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: kzrnm/get-net-sdk-project-versions-action@v2
+        id: get-version
+        with:
+          proj-path: '${{env.API_PROJECT_NAME}}/${{env.API_PROJECT_NAME}}.csproj'
+
+      - run: echo "${{steps.get-version.version}}"
+          
+      - name: Pack
+        run: dotnet pack '${{env.API_PROJECT_NAME}}/${{env.API_PROJECT_NAME}}.csproj' --c Release /p:Version=${{steps.get-version.version}} --no-build --output .
+
+      - name: Publish to GitHub Packages
+        run: dotnet nuget push "bin/Release/MyApp.${{ steps.get-version.version }}.nupkg" --source "github"
