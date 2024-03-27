@@ -9,6 +9,7 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   PACK_OUTPUT_FOLDER: 'pack-output'
+  PROJECT_NAME: 'Explorations.Pipelines.Extensions'
 
 jobs:
   publish:
@@ -27,12 +28,12 @@ jobs:
       - uses: kzrnm/get-net-sdk-project-versions-action@v2
         id: get-version
         with:
-          proj-path: '${{env.API_PROJECT_NAME}}/${{env.API_PROJECT_NAME}}.csproj'
+          proj-path: '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj'
 
       - run: echo "${{steps.get-version.version}}"
           
       - name: Pack
-        run: dotnet pack '${{env.API_PROJECT_NAME}}/${{env.API_PROJECT_NAME}}.csproj' --c Release /p:Version=${{steps.get-version.version}} --no-build --output .
+        run: dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' --c Release /p:Version=${{steps.get-version.version}} --no-build --output .
 
       - name: Publish to GitHub Packages
         run: dotnet nuget push "bin/Release/MyApp.${{ steps.get-version.version }}.nupkg" --source "github"
