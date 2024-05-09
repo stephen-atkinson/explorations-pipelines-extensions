@@ -29,11 +29,15 @@ jobs:
         id: get-version
         with:
           proj-path: '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj'
-
-      - run: echo "${{steps.get-version.outputs.version}}"
           
       - name: Pack
-        run: dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' -c Release /p:Version=${{steps.get-version.outputs.version}} --output .
+        run: |
+          dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' \
+          -c Release /p:Version=${{steps.get-version.outputs.version}} \
+          --output .
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push "${{env.PROJECT_NAME}}.${{ steps.get-version.outputs.version }}.nupkg" --source https://nuget.pkg.github.com/stephen-atkinson/index.json --api-key ${{secrets.PACKAGES_PAT}}
+        run: |
+          dotnet nuget push '${{env.PROJECT_NAME}}.${{ steps.get-version.outputs.version }}.nupkg' \
+          --source https://nuget.pkg.github.com/stephen-atkinson/index.json \
+          --api-key ${{secrets.PACKAGES_PAT}}
