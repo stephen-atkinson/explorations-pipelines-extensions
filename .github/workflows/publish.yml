@@ -32,12 +32,12 @@ jobs:
           
       - name: Pack
         run: |
-          dotnet pack '${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj' \
-          -c Release /p:Version=${{steps.get-version.outputs.version}} \
+          dotnet pack '${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj' \
+          -c Release /p:Version=${{ steps.get-version.outputs.version }} \
           --output .
 
       - name: Publish to GitHub Packages
         run: |
-          dotnet nuget push '${{env.PROJECT_NAME}}.${{ steps.get-version.outputs.version }}.nupkg' \
-          --source https://nuget.pkg.github.com/stephen-atkinson/index.json \
-          --api-key ${{secrets.PACKAGES_PAT}}
+          dotnet nuget push '${{ env.PROJECT_NAME }}.${{ steps.get-version.outputs.version }}.nupkg' \
+          --source ${{ vars.PACKAGES_SOURCE }} \
+          --api-key ${{ secrets.PACKAGES_PAT }}
